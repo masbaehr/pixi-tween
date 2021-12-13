@@ -1,6 +1,6 @@
 /*!
  * pixi-tween - v1.0.0
- * Compiled Tue, 15 Dec 2020 12:15:16 UTC
+ * Compiled Mon, 13 Dec 2021 20:58:06 UTC
  *
  * pixi-tween is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -9,12 +9,14 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.__pixiTween = factory());
-}(this, (function () { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.__pixiTween = factory());
+})(this, (function () { 'use strict';
 
   if (typeof PIXI === 'undefined') { throw 'PixiJS is required'; }
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -81,6 +83,19 @@
     return _setPrototypeOf(o, p);
   }
 
+  function _isNativeReflectConstruct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+
+    try {
+      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -92,9 +107,30 @@
   function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
+    } else if (call !== void 0) {
+      throw new TypeError("Derived constructors may only return object or undefined");
     }
 
     return _assertThisInitialized(self);
+  }
+
+  function _createSuper(Derived) {
+    var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+    return function _createSuperInternal() {
+      var Super = _getPrototypeOf(Derived),
+          result;
+
+      if (hasNativeReflectConstruct) {
+        var NewTarget = _getPrototypeOf(this).constructor;
+
+        result = Reflect.construct(Super, arguments, NewTarget);
+      } else {
+        result = Super.apply(this, arguments);
+      }
+
+      return _possibleConstructorReturn(this, result);
+    };
   }
 
   function _superPropBase(object, property) {
@@ -106,7 +142,7 @@
     return object;
   }
 
-  function _get(target, property, receiver) {
+  function _get() {
     if (typeof Reflect !== "undefined" && Reflect.get) {
       _get = Reflect.get;
     } else {
@@ -117,14 +153,14 @@
         var desc = Object.getOwnPropertyDescriptor(base, property);
 
         if (desc.get) {
-          return desc.get.call(receiver);
+          return desc.get.call(arguments.length < 3 ? target : receiver);
         }
 
         return desc.value;
       };
     }
 
-    return _get(target, property, receiver || target);
+    return _get.apply(this, arguments);
   }
 
   /* eslint-disable no-mixed-operators */
@@ -723,10 +759,10 @@
    * @memberof PIXI.tween
    */
 
-  var Tween =
-  /*#__PURE__*/
-  function (_PIXI$utils$EventEmit) {
+  var Tween = /*#__PURE__*/function (_PIXI$utils$EventEmit) {
     _inherits(Tween, _PIXI$utils$EventEmit);
+
+    var _super = _createSuper(Tween);
 
     /**
      * @param {*} target - Target object to tween
@@ -738,7 +774,7 @@
 
       _classCallCheck(this, Tween);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Tween).call(this));
+      _this = _super.call(this);
       _this.target = target;
 
       if (manager) {
@@ -904,13 +940,66 @@
        */
 
     }, {
-      key: "remove",
+      key: "active",
+      get: function get() {
+        return this._active;
+      }
+      /**
+       * How much time has passed on an active tween
+       *
+       * @member {number}
+       * @readonly
+       */
 
+    }, {
+      key: "elapsedTime",
+      get: function get() {
+        return this._elapsedTime;
+      }
+      /**
+       * 0-1 decimal value representing proportion of completion
+       *
+       * @member {number}
+       * @readonly
+       */
+
+    }, {
+      key: "progress",
+      get: function get() {
+        return this._progress;
+      }
+      /**
+       * True if the tween has started running
+       *
+       * @member {boolean}
+       * @readonly
+       */
+
+    }, {
+      key: "isStarted",
+      get: function get() {
+        return this._isStarted;
+      }
+      /**
+       * True if a tween has ended running
+       *
+       * @member {boolean}
+       * @readonly
+       */
+
+    }, {
+      key: "isEnded",
+      get: function get() {
+        return this._isEnded;
+      }
       /**
        * Remove the tween from the manager if it has one
        *
        * @returns {PIXI.tween.Tween} - This tween instance
        */
+
+    }, {
+      key: "remove",
       value: function remove() {
         if (!this.manager) {
           return this;
@@ -1267,59 +1356,6 @@
       value: function _canUpdate() {
         return this._active && this.target;
       }
-    }, {
-      key: "active",
-      get: function get() {
-        return this._active;
-      }
-      /**
-       * How much time has passed on an active tween
-       *
-       * @member {number}
-       * @readonly
-       */
-
-    }, {
-      key: "elapsedTime",
-      get: function get() {
-        return this._elapsedTime;
-      }
-      /**
-       * 0-1 decimal value representing proportion of completion
-       *
-       * @member {number}
-       * @readonly
-       */
-
-    }, {
-      key: "progress",
-      get: function get() {
-        return this._progress;
-      }
-      /**
-       * True if the tween has started running
-       *
-       * @member {boolean}
-       * @readonly
-       */
-
-    }, {
-      key: "isStarted",
-      get: function get() {
-        return this._isStarted;
-      }
-      /**
-       * True if a tween has ended running
-       *
-       * @member {boolean}
-       * @readonly
-       */
-
-    }, {
-      key: "isEnded",
-      get: function get() {
-        return this._isEnded;
-      }
     }]);
 
     return Tween;
@@ -1364,9 +1400,7 @@
    * @memberof PIXI.tween
    */
 
-  var TweenManager =
-  /*#__PURE__*/
-  function () {
+  var TweenManager = /*#__PURE__*/function () {
     /** */
     function TweenManager() {
       _classCallCheck(this, TweenManager);
@@ -1529,10 +1563,10 @@
    * @class
    * @memberof PIXI.tween
    */
-  var TweenPath =
-  /*#__PURE__*/
-  function (_PIXI$Graphics) {
+  var TweenPath = /*#__PURE__*/function (_PIXI$Graphics) {
     _inherits(TweenPath, _PIXI$Graphics);
+
+    var _super = _createSuper(TweenPath);
 
     /**
      *
@@ -1542,7 +1576,7 @@
 
       _classCallCheck(this, TweenPath);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(TweenPath).call(this));
+      _this = _super.call(this);
       /** @member {PIXI.Polygon} - PIXI object to use as the path */
 
       _this.polygon = new PIXI.Polygon();
@@ -1574,13 +1608,18 @@
 
 
     _createClass(TweenPath, [{
-      key: "clear",
-
+      key: "length",
+      get: function get() {
+        return this.polygon.points.length ? this.polygon.points.length / 2 + (this.polygon.closeStroke ? 1 : 0) : 0;
+      }
       /**
        * Clear the path
        *
        * @returns {PIXI.tween.TweenPath} - This instance of TweenPath
        */
+
+    }, {
+      key: "clear",
       value: function clear() {
         _get(_getPrototypeOf(TweenPath.prototype), "clear", this).call(this);
 
@@ -2006,11 +2045,6 @@
         this.dirty = true;
         return this;
       }
-    }, {
-      key: "length",
-      get: function get() {
-        return this.polygon.points.length ? this.polygon.points.length / 2 + (this.polygon.closeStroke ? 1 : 0) : 0;
-      }
     }]);
 
     return TweenPath;
@@ -2040,4 +2074,4 @@
 
   return tween;
 
-})));
+}));
